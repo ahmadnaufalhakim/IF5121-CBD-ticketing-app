@@ -1,7 +1,12 @@
-import item
-class Film(object):
+import sys
+import os
+path = os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
+sys.path.insert(0, path)
+
+from src.item import Item
+class Film(Item):
     def __init__(self,name, price, synopsis, genre, duration, poster):
-        item.__init__(self, name, price)
+        Item.__init__(self, name, price)
         self.synopsis = synopsis
         self.genre = genre
         self.duration = duration

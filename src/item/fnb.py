@@ -1,8 +1,8 @@
-import item
+from item import Item
 
-class FnB(object):
+class FnB(Item):
     def __init__(self, name, price, poster, detail_info, available_stock):
-        item.__init__(self, name, price)
+        Item.__init__(self,name, price)
         self.poster = poster
         self.detail_info = detail_info
         self.available_stock = available_stock
@@ -18,4 +18,3 @@ class FnB(object):
         self.detail_info = detail_info
     def set_stock(self, available_stock):
         self.available_stock = available_stock
-    
