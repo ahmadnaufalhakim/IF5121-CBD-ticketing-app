@@ -15,5 +15,3 @@ class Studio(object):
         self.name = num_rows
     def set_num_cols(self, num_cols):
         self.name = num_cols
-    def is_Available(self,row, col):
-        pass

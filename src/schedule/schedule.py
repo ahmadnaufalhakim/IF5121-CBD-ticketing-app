@@ -33,3 +33,7 @@ class Schedule(object):
         self.date_end = date_end
     def get_available_seat(self):
         return self.mat_seat
+    def take_seat(self, row, col):
+        self.mat_seat[row][col] = False
+    def untake_seat(self, row, col):
+        self.mat_seat[row][col] = True
