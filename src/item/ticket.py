@@ -1,4 +1,8 @@
-from item import Item
+import sys
+import os
+path = os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
+sys.path.insert(0, path)
+from src.item.item import Item
 
 class Ticket(Item):
     def __init__(self, name, price, schedule, date, seat):

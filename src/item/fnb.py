@@ -1,4 +1,8 @@
-from item import Item
+import sys
+import os
+path = os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
+sys.path.insert(0, path)
+from src.item.item import Item
 
 class FnB(Item):
     def __init__(self, name, price, poster, detail_info, available_stock):
@@ -6,6 +10,8 @@ class FnB(Item):
         self.poster = poster
         self.detail_info = detail_info
         self.available_stock = available_stock
+    def __str__(self):
+        return f'Nama Makanan / Minuman : {self.name}\nDetail Info : {self.detail_info}\nKetersediaan : {self.available_stock}'
     def get_poster(self):
         return self.poster
     def get_detail_info(self):

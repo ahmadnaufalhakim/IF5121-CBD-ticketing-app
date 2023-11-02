@@ -1,10 +1,16 @@
 class Schedule(object):
-    def __init__(self, film, studio, time, date_start, date_end):
+    def __init__(self, id, film, studio, time, date_start, date_end):
+        self.id = id
         self.film = film
         self.studio = studio
         self.time = time
         self.date_start = date_start
         self.date_end = date_end
+        self.mat_seat = [[True for x in range (self.studio.num_cols)] for y in range (self.studio.num_rows)]
+    def __str__(self) -> str:
+        return f'{self.film.__str__()}'
+    def get_id(self):
+        return self.id
     def get_film(self):
         return self.film
     def get_studio(self):
@@ -25,3 +31,5 @@ class Schedule(object):
         self.date_start = date_start
     def set_date_end(self, date_end):
         self.date_end = date_end
+    def get_available_seat(self):
+        return self.mat_seat
