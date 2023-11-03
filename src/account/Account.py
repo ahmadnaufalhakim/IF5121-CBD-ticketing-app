@@ -8,7 +8,15 @@ class Account:
     def __init__(self) -> None:
         self._email = None 
         self._password = None
-        self._database = DictDatabase()
+        self._database = None
+    
+    @property
+    def database(self):
+        return self._database
+    
+    @database.setter
+    def database(self, selection_database):
+        self._database = selection_database
     
     @property
     def email(self):
@@ -43,6 +51,16 @@ class User(Account):
         return {self.email : self._database.get_user_credentials() [self.email]} if self.email \
             in self._database.get_user_credentials() and self._database.get_user_credentials() \
                 [self.email]['password'] == self.password else False
+    
+    def reset_password(self, email, new_password):
+        if email in self._database.get_user_credentials():
+            self._database.get_user_credentials()[email]['password']\
+            = new_password
+            print(self._database.get_user_credentials())
+            return True
+            
+        else: 
+            return False
 
     def register_membership(self):
         print("bayar")
@@ -65,7 +83,15 @@ class Admin(Account):
             return {self.email : self._database.get_admin_credentials()[self.email]}
         else:
             return False
-
+        
+    def reset_password(self, email, new_password):
+        if email in self._database.get_admin_credentials():
+            self._database.get_admin_credentials()[email]['password']\
+            = new_password
+            print(self._database.get_admin_credentials())
+            return True    
+        else: 
+            return False
 
 
 class Database(ABC):
