@@ -17,13 +17,19 @@ class Membership:
     @user_info.setter
     def user_info(self, usr_info:dict):
         self._user_info = usr_info
+
+    @property
+    def payment(self):
+        return self._payment
+    
+    @payment.setter
+    def paymemt(self, payment_service):
+        self._payment = payment_service
     
     def create_membership_bill(self, months):
         print(f"Anda membeli membership selama {months} bulan")
         return self._user_info.update({'membership_month':months})
 
     """ NOTE: Masih bingung untuk mekanisme ini"""
-    def check_status(self, payment_status):
-        
-        self._status = payment_status
-        return self._status
+    def check_status(self):
+        return self._payment.get_status()
