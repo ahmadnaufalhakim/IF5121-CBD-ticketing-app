@@ -5,10 +5,11 @@ sys.path.insert(0, path)
 from src.item.item import Item
 
 class FnB(Item):
-    def __init__(self, name, price, poster, detail_info, available_stock):
+    def __init__(self, name, price, poster, detail_info, available_stock, is_available=True):
         Item.__init__(self,name, price)
         self.poster = poster
         self.detail_info = detail_info
+        self.is_available = is_available
         self.available_stock = available_stock
     def __str__(self):
         return f'Nama Makanan / Minuman : {self.name}\nDetail Info : {self.detail_info}\nKetersediaan : {self.available_stock}'
@@ -24,3 +25,5 @@ class FnB(Item):
         self.detail_info = detail_info
     def set_stock(self, available_stock):
         self.available_stock = available_stock
+    def set_available(self, is_available):
+        self.is_available= is_available
