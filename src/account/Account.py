@@ -1,7 +1,7 @@
 import os
 from abc import abstractmethod, ABC
 
-abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 
 class Account:
 

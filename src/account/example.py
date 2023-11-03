@@ -1,24 +1,33 @@
+""" Contoh penggunaa module Account """
+
+import os
 from Account import * 
+from getpass import getpass
+from enum import Enum
+
+""" Path ke parent/main.py"""
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+
+
+""" Tipe - tipe akun """
+class AccountType(Enum):
+    USER = '1'
+    ADMIN = '2'
+
 
 user_selection = input("Masuk sebagai: ")
 
-if user_selection == '1':
+if user_selection == AccountType.USER.value:
     account = User()
     account.email = input("Masukkan email: ")
-    account.password = input("Masukkan password: ")
-    print(account.login())
+    account.password = getpass("Masukkan password: ")
+    print("status login:", account.login())
 
-elif user_selection == '2':
+elif user_selection == AccountType.ADMIN.value:
     account = Admin()
     account.email = input("Masukkan email: ")
-    account.password = input("Masukkan password: ")
-    print(account.login())
-
-elif user_selection == '3':
-    account = User()
-    account.reset_password("sian@gmail.com", "akuganteng")
-    print(Account.user_credentials)
-    exit(0)
+    account.password = getpass("Masukkan password: ")
+    print("status login:", account.login())
 
 else:
     print("pilihan tidak ditemukan")
