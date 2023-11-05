@@ -27,3 +27,9 @@ class FnB(Item):
         self.available_stock = available_stock
     def set_available(self, is_available):
         self.is_available= is_available
+    def cancel(self):
+        self.set_stock(self.get_available_stock()+1)
+    def book(self):
+        if (self.get_available_stock()-1) < 0:
+            raise Exception(f"Stock {self.get_name} sudah habis")
+        self.set_stock(self.get_available_stock()-1)

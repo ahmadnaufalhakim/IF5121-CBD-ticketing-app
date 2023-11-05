@@ -34,6 +34,9 @@ class Schedule(object):
     def get_available_seat(self):
         return self.mat_seat
     def take_seat(self, row, col):
+        if not self.mat_seat[row][col]:
+            raise Exception("Seat is currently unavailable")
         self.mat_seat[row][col] = False
+
     def untake_seat(self, row, col):
         self.mat_seat[row][col] = True
