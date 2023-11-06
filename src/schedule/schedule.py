@@ -1,7 +1,8 @@
-from item.ticket import Ticket
-from film.film import Film
-from studio.studio import Studio
+from src.item.ticket import Ticket
+from src.film.film import Film
+from src.studio.studio import Studio
 from datetime import date, timedelta
+import string
 class Schedule(object):
     def __init__(self, id: str, film: Film, studio: Studio, time: str, date_start: date, date_end: date):
         self.id = id
@@ -46,8 +47,25 @@ class Schedule(object):
     def take_seat(self, date, row, col) -> Ticket:
         if not self.mat_seat[date][row][col]:
             raise Exception("Seat is currently unavailable")
-        self.mat_seat[row][col] = False
+        self.mat_seat[date][row][col] = False
         return Ticket(self, date, row, col)
 
     def untake_seat(self, date, row, col):
         self.mat_seat[date][row][col] = True
+    
+    def show_seats(self, date):
+        seats = self.mat_seat[date]
+        print("Seat Availability:")
+        print("Row/Col", end='\t')
+        for col in range(len(seats[0])):
+            print(col, end='\t')
+        print()
+        for i, row in enumerate(seats):
+            row_label = string.ascii_uppercase[i]  # Convert numeric row index to alphabet
+            print(f"Row {row_label}", end='\t')
+            for seat in row:
+                if seat:  # If the seat is available (True)
+                    print("◯", end='\t')  # Circle symbol for available seat
+                else:
+                    print("⨉", end='\t')  # X symbol for occupied seat
+            print()

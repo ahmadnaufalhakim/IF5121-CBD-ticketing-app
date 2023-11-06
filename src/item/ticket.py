@@ -2,7 +2,7 @@
 # import os
 # path = os.path.abspath(os.path.join(os.path.dirname(__file__),"../.."))
 # sys.path.insert(0, path)
-from item.item import Item
+from src.item.item import Item
 
 class Ticket(Item):
     def __init__(self,schedule, date, seat_row, seat_col):
@@ -23,7 +23,6 @@ class Ticket(Item):
     def cancel(self):
         self.schedule.untake_seat(self.seat_row, self.seat_col)
     def book(self):
-        self.schedule.take_seat(self.seat_row, self.seat_col)
         self.status = "booked"
     def buy(self):
         self.status = "bought"

@@ -12,7 +12,7 @@ class Film(Item):
         self.duration = duration
         self.poster = poster
     def __str__(self) -> str:
-        return f"Nama Film : {self.name}\nHarga Film : {self.price}\nGenre : {self.genre}\nDurasi : {self.duration} menit\nSinopsis : {self.synopsis}"
+        return f"Film : {self.name}\nHarga: {self.price}\nGenre : {self.genre}\nDurasi: {self.duration} menit\nSinopsis: {self.synopsis}"
     def get_synopsis(self):
         return self.synopsis
     def get_genre(self):

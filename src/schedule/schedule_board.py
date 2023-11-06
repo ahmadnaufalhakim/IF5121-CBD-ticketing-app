@@ -17,3 +17,5 @@ class ScheduleBoard(object):
         for item in self.schedules:
             print(item)
             print()
+    def get_schedules(self):
+        return self.schedules
