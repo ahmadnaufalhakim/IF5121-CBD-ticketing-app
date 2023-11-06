@@ -40,6 +40,5 @@ class Promo(IPromo) :
         if self in Promo.promos :
             Promo.promos.remove(self)
         del self
-
     def is_valid(self, amount) :
         return amount >= self.min_purchase
