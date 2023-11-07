@@ -1,4 +1,4 @@
-from payment_service import PaymentService
+from src.payment_service import PaymentService
 from .payment import Payment
 
 class MembershipPayment(Payment) :
@@ -23,3 +23,11 @@ class MembershipPayment(Payment) :
             self.set_status("FAILED")
             print(f"Payment with invoice number {self.get_invoice_number()} is failed.")
             return False
+
+    def __str__(self) -> str:
+        return (
+            f"{super().__str__()}"
+            f"User info: {self.get_user()}\n"
+            f"Final price (net): {self.get_total_price()}\n"
+            f"Payment status: {self.get_status().name}"
+        )

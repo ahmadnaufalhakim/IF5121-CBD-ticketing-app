@@ -1,9 +1,11 @@
-from src.film.film import Film
+from datetime import date
+from src.film import Film
 from src.schedule import Schedule, ScheduleBoard
 from src.studio import Studio
 from src.item import FnB
 from src.booking import Booking
-from datetime import date
+from src.payment import Payment, BookingPayment, MembershipPayment
+from src.payment_service import *
 from src.account.Account import Account, User, DictDatabase
 from getpass import getpass
 import string
@@ -34,8 +36,9 @@ class UI:
 
         self.fnbs = [french_fries, popcorn, thai_tea]
 
-        self.booking_history = {}
-    
+        self.ongoing_payment = {}
+        self.payment_history = {}
+
     def init_session(self, user):
         self.active_account = user
 
@@ -64,7 +67,7 @@ class UI:
         while not valid:
             print("Silahkan pilih menu dibawah ini:")
             print("1. Lihat jadwal")
-            print("2. Cek status pembayaran")
+            print("2. Lihat pembelian yang sedang berlangsung")
             print("3. Lihat riwayat pembelian")
             print("4. Logout")
             c = input("Masukan pilihan Anda: ")
@@ -74,31 +77,31 @@ class UI:
                 self.schedule_screen()
             elif c == "2":
                 valid = True
-                self.payment_status_screen()
+                self.ongoing_payment_screen()
             elif c == "3":
                 valid = True
-                self.booking_history_screen()
+                self.payment_history_screen()
             elif c == "4":
                 valid = True
                 self.active_account = None
                 self.login_screen()
             else:
-                print("Pilihan tidak valid")
+                print("Masukan tidak valid.")
     
     def schedule_screen(self):
         valid = False
         while not valid:
             print("Silahkan pilih jadwal untuk melakukan booking:")
-            i = 1
-            for s in self.schedules.get_schedules():
-                print(f'[{i}] {s.get_date_start()} s.d. {s.get_date_end()}, pukul {s.get_time()}\n{s}\n')
-                i += 1
+            for i, s in enumerate(self.schedules.get_schedules()) :
+                print(f'[{i+1}] {s.get_date_start()} s.d. {s.get_date_end()}, pukul {s.get_time()}\n{s}\n')
             print("99. Kembali ke menu utama")
             c = input("Masukan pilihan Anda: ")
 
-            if not c.isnumeric() or (int(c) != 99 and int(c) > len(self.schedules.get_schedules())):
-                print("Pilihan tidak valid")
-            if c == "99":
+            if not c.isnumeric() :
+                print("Masukan tidak valid.")
+            elif int(c) != 99 and (int(c) <= 0 or int(c) > len(self.schedules.get_schedules())) :
+                print("Masukan tidak valid.")
+            elif c == "99" :
                 valid = True
                 self.main_screen()
             else:
@@ -131,42 +134,141 @@ class UI:
                     valid_date = True
                 except KeyError as e :
                     date = input(f"Tanggal tidak tersedia.\nTolong masukkan pilihan tanggal yang valid antara {schedule.get_date_start()} s.d. {schedule.get_date_end()} (format %Y-%m-%D): ")
-            chosen_seats = input("Silahkan pilih seats (pisahkan dengan koma bila lebih dari satu): ").split(",")
-            for seat in convert_seat_to_index(chosen_seats):
+            chosen_seats = input("Silahkan pilih seats (pisahkan dengan koma bila lebih dari satu): ").replace(' ', '').split(",")
+            for seat in convert_seat_to_index(chosen_seats) :
                 tickets.append(schedule.take_seat(date, seat[0], seat[1]))
 
-            print("FnB Menu:")
-            i = 1                
-            for s in self.fnbs:
-                print(f'[{i}] {s}\n')
-                i += 1
-            chosen_fnb_idx = [int(f) for f in input("Silahkan pilih FnB (pisahkan dengan koma bila lebih dari satu):").split(",")]
-            if chosen_fnb_idx:
+            print("FnB Menu:")              
+            for i, s in enumerate(self.fnbs) :
+                print(f'[{i+1}] {s}\n')
+
+            print("Silakan pilih FnB yang ingin dipesan (pisahkan dengan koma jika memesan lebih dari satu)")
+            print("Tekan <enter> jika tidak ingin memesan FnB apapun")
+            chosen_fnb_str = input("Masukkan pilihan Anda: ")
+            if chosen_fnb_str :
+                chosen_fnb_idx = [int(f) for f in chosen_fnb_str.replace(' ', '').split(",")]
                 for f in chosen_fnb_idx:
                     fnbs.append(self.fnbs[f-1])
-            
+
             self.booking.set_fnbs(fnbs)
             self.booking.set_tickets(tickets)
-
             self.booking.checkout()
-            # store to temp db
-            if self.active_account.email not in self.booking_history:
-                self.booking_history[self.active_account.email] = []
-            self.booking_history[self.active_account.email].append(self.booking)
-
             print(f"Booking success with reference number: {self.booking.get_booking_number()}")
-            
-
             valid = True
-            self.main_screen()
+        self.select_payment_service_screen(self.booking)
 
+    def select_payment_service_screen(self, booking: Booking) :
+        valid = False
+        while not valid :
+            print(f"Silakan pilih salah satu metode pembayaran di bawah ini untuk kode booking {booking.get_booking_number()}:")
+            print("1. QRIS")
+            print("2. Credit Card (Mastercard)")
+            print("3. Credit Card (VISA)")
+            print("4. Bank Transfer (BCA)")
+            print("5. Bank Transfer (BNI)")
+            print("6. Bank Transfer (BRI)")
+            print("7. E-Wallet (GoPay)")
+            print("8. E-Wallet (OVO)")
+            payment_service_option = input("Masukkan pilihan Anda: ")
+            if payment_service_option == '1' :
+                valid = True
+                payment_method = QRIS(booking.get_booking_number())
+            elif payment_service_option == '2' :
+                valid = True
+                payment_method = CreditCardMastercard(booking.get_booking_number())
+            elif payment_service_option == '3' :
+                valid = True
+                payment_method = CreditCardVISA(booking.get_booking_number())
+            elif payment_service_option == '4' :
+                valid = True
+                payment_method = BankTransferBCA(booking.get_booking_number())
+            elif payment_service_option == '5' :
+                valid = True
+                payment_method = BankTransferBNI(booking.get_booking_number())
+            elif payment_service_option == '6' :
+                valid = True
+                payment_method = BankTransferBRI(booking.get_booking_number())
+            elif payment_service_option == '7' :
+                valid = True
+                payment_method = EWalletGoPay(booking.get_booking_number())
+            elif payment_service_option == '8' :
+                valid = True
+                payment_method = EWalletOVO(booking.get_booking_number())
+            else :
+                print("Masukan tidak valid.")
+        self.booking_payment = BookingPayment(
+            booking.get_booking_number(),
+            booking.get_total_price(),
+            payment_method,
+            booking
+        )
 
-    def booking_history_screen(self):
-        if self.active_account.email not in self.booking_history:
-            print("Anda belum memiliki riwayat pembelian")
+        if self.active_account.email not in self.ongoing_payment:
+            self.ongoing_payment[self.active_account.email] = []
+        self.ongoing_payment[self.active_account.email].append(self.booking_payment)
+        self.main_screen()
+
+    def ongoing_payment_screen(self):
+        if self.active_account.email not in self.ongoing_payment:
+            print("\nAnda belum memiliki riwayat pembelian")
         else:
-            for h in self.booking_history[self.active_account.email]:
-                print(h)
+            print("\n#########################################")
+            print("### Pembelian yang Sedang Berlangsung ###")
+            print("#########################################")
+            for i, s in enumerate(self.ongoing_payment[self.active_account.email]):
+                print(f'[{i+1}] {s}')
+
+            valid = False
+            while not valid :
+                print("Silahkan pilih pembelian yang ingin diproses")
+                print("Atau masukkan 99 untuk kembali ke menu utama")
+                c = input("Masukkan pilihan Anda: ")
+
+                if not c.isnumeric() :
+                    print("Masukan tidak valid.")
+                elif int(c) != 99 and (int(c) <= 0 or int(c) > len(self.ongoing_payment[self.active_account.email])) :
+                    print("Masukan tidak valid.")
+                elif c == "99" :
+                    valid = True
+                    self.main_screen()
+                else:
+                    valid = True
+                    self.process_payment(self.ongoing_payment[self.active_account.email][int(c)-1], int(c)-1)
+
+    def process_payment(self, payment: Payment, ongoing_payment_idx) :
+        valid = False
+        while not valid :
+            print(f"Silakan pilih aksi untuk pembelian dengan invoice number {payment.get_invoice_number()}:")
+            print("1. Tambahkan promo")
+            print("2. Hapus promo")
+            print("3. Lakukan pembayaran")
+            c = input("Masukkan pilihan Anda: ")
+            if c == '1' :
+                valid = True
+                self.main_screen()
+            elif c == '2' :
+                valid = True
+                self.main_screen()
+            elif c == '3' :
+                payment.pay()
+                del self.ongoing_payment[self.active_account.email][ongoing_payment_idx]
+                if self.active_account.email not in self.payment_history:
+                    self.payment_history[self.active_account.email] = []
+                self.payment_history[self.active_account.email].append(payment)
+                valid = True
+                self.main_screen()
+            else :
+                print("Masukan tidak valid.")
+
+    def payment_history_screen(self):
+        if self.active_account.email not in self.payment_history:
+            print("\nAnda belum memiliki riwayat pembelian")
+        else:
+            print("\n#########################")
+            print("### Riwayat Pembelian ###")
+            print("#########################")
+            for i, s in enumerate(self.payment_history[self.active_account.email]):
+                print(f'[{i+1}] {s}\n')
         input("Tekan <enter> untuk kembali ke menu utama")
         self.main_screen()
 
@@ -177,12 +279,12 @@ class UI:
             print("Silahkan pilih menu dibawah ini:")
             print("1. Login")
             print("2. Keluar aplikasi")
-            c = input("Masukan pilihan Anda: ")
 
+            c = input("Masukan pilihan Anda: ")
             if c == "1":
                 self.login_screen()
             elif c == "2":
                 print("Bye..")
                 live = False
             else:
-                print("Masukan tidak valid")
+                print("Masukan tidak valid.")

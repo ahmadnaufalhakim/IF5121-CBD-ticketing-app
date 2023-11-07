@@ -1,1 +1,1 @@
-from .promo import Promo
+from src.promo.promo import Promo

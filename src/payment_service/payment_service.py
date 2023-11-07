@@ -1,4 +1,4 @@
-from payment_service.interfaces import IPaymentService
+from src.payment_service.interfaces.IPaymentService import IPaymentService
 from abc import ABC, abstractmethod
 
 class PaymentService(IPaymentService, ABC) :

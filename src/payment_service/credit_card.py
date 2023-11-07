@@ -21,3 +21,6 @@ class CreditCard(PaymentService, ABC) :
     @abstractmethod
     def validate_payment(self):
         pass
+
+    def __str__(self) -> str:
+        return f"Credit Card ({self.get_card_provider().name})"

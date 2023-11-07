@@ -1,5 +1,5 @@
 from enum import Enum
-from payment_service import PaymentService
+from src.payment_service import PaymentService
 
 class PaymentStatus(Enum) :
     PENDING = 0
@@ -49,3 +49,9 @@ class Payment :
             self.set_status("FAILED")
             print(f"Payment with invoice number {self.get_invoice_number()} is failed.")
         return payment_validation
+    
+    def __str__(self) -> str:
+        return (
+            f"Invoice number: {self.get_invoice_number()}\n"
+            f"Payment method: {self.get_payment_service()}\n"
+        )

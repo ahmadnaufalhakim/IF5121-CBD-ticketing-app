@@ -1,5 +1,5 @@
-from promo import Promo
-from payment_service import PaymentService
+from src.promo import Promo
+from src.payment_service import PaymentService
 from .payment import Payment
 
 class BookingPayment(Payment) :
@@ -34,3 +34,16 @@ class BookingPayment(Payment) :
         else :
             self.booking.cancel()
             return False
+
+    def __str__(self) -> str:
+        return (
+            f"{super().__str__()}"
+            f"Booking info:\n"
+            f"\tFilm: {self.get_booking().get_tickets()[0].get_schedule().get_film().get_name()}\n"
+            f"\tStudio: {self.get_booking().get_tickets()[0].get_schedule().get_studio().get_name()}\n"
+            f"\tSeats: {', '.join([ticket.get_seat() for ticket in self.booking.get_tickets()])}\n"
+            f"\tFnBs: {', '.join([str(fnb.get_name()) for fnb in self.booking.get_fnbs()]) if len(self.booking.get_fnbs())>0 else 'No FnBs'}\n"
+            f"\tTotal price: {self.booking.get_total_price()}\n"
+            f"Final price (net): {self.get_total_price()}\n"
+            f"Payment status: {self.get_status().name}\n"
+        )

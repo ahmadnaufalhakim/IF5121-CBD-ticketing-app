@@ -21,7 +21,7 @@ class Ticket(Item):
     def set_date(self,date):
         self.date = date
     def cancel(self):
-        self.schedule.untake_seat(self.seat_row, self.seat_col)
+        self.schedule.untake_seat(self.date, self.seat_row, self.seat_col)
     def book(self):
         self.status = "booked"
     def buy(self):
@@ -37,6 +37,6 @@ class Ticket(Item):
         # Convert the column index to a letter representing the row
         row_letter = chr(ord('A') + row_index)
         
-        seat_number = f"{row_letter}{col_index}"
+        seat_number = f"{row_letter}{col_index+1}"
         
         return seat_number

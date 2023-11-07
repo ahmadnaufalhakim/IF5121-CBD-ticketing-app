@@ -1,4 +1,4 @@
-from promo.interfaces import IPromo
+from src.promo.interfaces.IPromo import IPromo
 
 class Promo(IPromo) :
     # Class-level attribute to keep track all promos that are created

@@ -22,3 +22,6 @@ class BankTransfer(PaymentService, ABC) :
     @abstractmethod
     def validate_payment(self):
         pass
+
+    def __str__(self) -> str:
+        return f"Bank Transfer ({self.get_bank().name})"

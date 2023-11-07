@@ -21,3 +21,6 @@ class EWallet(PaymentService, ABC) :
     @abstractmethod
     def validate_payment(self):
         pass
+
+    def __str__(self) -> str:
+        return f"E-Wallet ({self.get_wallet_name().name})"
