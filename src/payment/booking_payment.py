@@ -7,7 +7,6 @@ class BookingPayment(Payment) :
         super().__init__(invoice_number, total_price, payment_service, status)
         self.set_booking(booking)
         self.set_promo(promo)
-        self.get_booking().checkout()
 
     # Getter(s)
     def get_booking(self) :

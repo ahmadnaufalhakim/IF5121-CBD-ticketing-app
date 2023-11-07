@@ -87,7 +87,7 @@ class UI:
             print("Silahkan pilih jadwal untuk melakukan booking:")
             i = 1
             for s in self.schedules.get_schedules():
-                print(f'[{i}] {s}\n')
+                print(f'[{i}] {s.get_date_start()} s.d. {s.get_date_end()}, pukul {s.get_time()}\n{s}\n')
                 i += 1
             print("99. Kembali ke menu utama")
             c = input("Masukan pilihan Anda: ")
@@ -114,12 +114,17 @@ class UI:
 
         valid = False
         while not valid:
-            # try:
             tickets = []
             fnbs = []
 
-            date = input("Silahkan pilih tanggal: ")
-            schedule.show_seats(date)
+            valid_date = False
+            date = input(f"Silahkan pilih tanggal antara {schedule.get_date_start()} s.d. {schedule.get_date_end()} (format %Y-%m-%D): ")
+            while not valid_date :
+                try :
+                    schedule.show_seats(date)
+                    valid_date = True
+                except KeyError as e :
+                    date = input(f"Tanggal tidak tersedia.\nTolong masukkan pilihan tanggal yang valid antara {schedule.get_date_start()} s.d. {schedule.get_date_end()} (format %Y-%m-%D): ")
             chosen_seats = input("Silahkan pilih seats (pisahkan dengan koma bila lebih dari satu): ").split(",")
             for seat in convert_seat_to_index(chosen_seats):
                 tickets.append(schedule.take_seat(date, seat[0], seat[1]))
@@ -142,9 +147,6 @@ class UI:
 
             valid = True
             self.main_screen()
-            # except Exception as e:
-
-            #     print(e)
 
 
     def start(self):

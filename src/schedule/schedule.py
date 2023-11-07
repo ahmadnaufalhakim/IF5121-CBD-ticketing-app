@@ -54,18 +54,21 @@ class Schedule(object):
         self.mat_seat[date][row][col] = True
     
     def show_seats(self, date):
-        seats = self.mat_seat[date]
-        print("Seat Availability:")
-        print("Row/Col", end='\t')
-        for col in range(len(seats[0])):
-            print(col, end='\t')
-        print()
-        for i, row in enumerate(seats):
-            row_label = string.ascii_uppercase[i]  # Convert numeric row index to alphabet
-            print(f"Row {row_label}", end='\t')
-            for seat in row:
-                if seat:  # If the seat is available (True)
-                    print("◯", end='\t')  # Circle symbol for available seat
-                else:
-                    print("⨉", end='\t')  # X symbol for occupied seat
+        try :
+            seats = self.mat_seat[date]
+            print("Seat Availability:")
+            print("Row/Col", end='\t')
+            for col in range(len(seats[0])):
+                print(col, end='\t')
             print()
+            for i, row in enumerate(seats):
+                row_label = string.ascii_uppercase[i]  # Convert numeric row index to alphabet
+                print(f"Row {row_label}", end='\t')
+                for seat in row:
+                    if seat:  # If the seat is available (True)
+                        print("◯", end='\t')  # Circle symbol for available seat
+                    else:
+                        print("⨉", end='\t')  # X symbol for occupied seat
+                print()
+        except KeyError as e :
+            raise KeyError(e)
