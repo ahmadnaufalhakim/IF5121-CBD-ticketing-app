@@ -211,6 +211,8 @@ class UI:
     def ongoing_payment_screen(self):
         if self.active_account.email not in self.ongoing_payment:
             print("\nAnda belum memiliki riwayat pembelian")
+            input("Tekan <enter> untuk kembali ke menu utama")
+            self.main_screen()
         else:
             print("\n#########################################")
             print("### Pembelian yang Sedang Berlangsung ###")
