@@ -30,3 +30,13 @@ class Ticket(Item):
         if self.status != "bought":
             raise Exception("Only bought ticket can be invalidated")
         self.set_status("invalidated")
+    def get_seat(self):
+        return self.matrix_index_to_seat_number(self.seat_row, self.seat_col)
+    
+    def matrix_index_to_seat_number(self, row_index, col_index):
+        # Convert the column index to a letter representing the row
+        row_letter = chr(ord('A') + row_index)
+        
+        seat_number = f"{row_letter}{col_index}"
+        
+        return seat_number
