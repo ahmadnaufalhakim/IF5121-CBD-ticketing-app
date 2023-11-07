@@ -58,7 +58,7 @@ class Booking(IBooking):
         booking_number = prefix + random_part
         return booking_number
     
-    def checkout(self, payment_type: str) -> None:
+    def checkout(self) -> None:
         # kurangi stock FnB yang dibeli
         for f in self.fnbs:
             f.book()

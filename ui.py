@@ -148,7 +148,7 @@ class UI:
             self.booking.set_fnbs(fnbs)
             self.booking.set_tickets(tickets)
 
-            self.booking.checkout("")
+            self.booking.checkout()
             # store to temp db
             if self.active_account.email not in self.booking_history:
                 self.booking_history[self.active_account.email] = []
