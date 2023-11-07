@@ -5,12 +5,12 @@
 from src.item.item import Item
 
 class Ticket(Item):
-    def __init__(self,schedule, date, seat_row, seat_col):
+    def __init__(self, schedule, date, seat_row, seat_col):
         self.schedule = schedule
         self.date = date
         self.seat_row = seat_row
         self.seat_col = seat_col
-        self.set_price(100)
+        self.set_price(schedule.get_film().get_price())
 
     def get_schedule(self):
         return self.schedule
