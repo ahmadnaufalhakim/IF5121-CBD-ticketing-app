@@ -10,9 +10,9 @@ import string
 
 class UI:
     def __init__(self):
-        self.init_items()
+        self.init_data()
     
-    def init_items(self):
+    def init_data(self):
         self.film1 = Film("The Marvels",20000, "Kekuatan Captain Marvel (Brie Larson) ternyata terhubung dengan Ms. Marvel (Iman Vellani) dan Monica Rambeau (Teyonah Parris). Hal ini membuat ketiganya terus menerus bertukar tempat. Mereka akhirnya bertemu dan mencari tahu kenapa kekuatan mereka saling terkoneksi. Dengan ancaman baru yang datang, ketiganya memutuskan menjadi satu tim untuk menyelamatkan alam semesta sebagai The Marvels.","Action, Adventure, Fantasy",120,"Poster The Marvels")
         self.film2 = Film("Petualangan Sherina 2",20000,"SHERINA (Sherina Munaf) dan SADAM (Derby Romero), dua teman kecil yang lama terpisah, bertemu kembali di Kalimantan untuk pelepasliaran orang utan. Reuni manis terhenti ketika anak orang utan bernama SAYU dicuri sekelompok orang.","Drama, Musikal",120,"Poster Sherina")
         self.studio1 = Studio("Studio 1",10,12)
@@ -33,10 +33,11 @@ class UI:
         thai_tea = FnB("Iced Thai Tea ", 25000, "Poster Thai Tea", "Es Thai Teas ukuran cup L", 100)
 
         self.fnbs = [french_fries, popcorn, thai_tea]
+
+        self.booking_history = {}
     
-    def init_session(self, user: User):
+    def init_session(self, user):
         self.active_account = user
-        self.booking = Booking(user, [], [])
 
     def login_screen(self):
         valid = False
@@ -50,12 +51,12 @@ class UI:
             user_account.password = password
             
             active_account = user_account.login()
-            self.init_session(active_account)
-
+            
             if not active_account:
                 print("Password salah!")
             else:
                 valid = True
+                self.init_session(user_account)
                 self.main_screen()
     
     def main_screen(self):
@@ -64,7 +65,7 @@ class UI:
             print("Silahkan pilih menu dibawah ini:")
             print("1. Lihat jadwal")
             print("2. Cek status pembayaran")
-            print("3. Lihat cart")
+            print("3. Lihat riwayat pembelian")
             print("4. Logout")
             c = input("Masukan pilihan Anda: ")
 
@@ -74,6 +75,9 @@ class UI:
             elif c == "2":
                 valid = True
                 self.payment_status_screen()
+            elif c == "3":
+                valid = True
+                self.booking_history_screen()
             elif c == "4":
                 valid = True
                 self.active_account = None
@@ -102,6 +106,8 @@ class UI:
                 self.booking_screen(self.schedules.get_schedules()[int(c)-1])
     
     def booking_screen(self, schedule: Schedule):
+        self.booking = Booking(self.active_account, [], [])
+
         def convert_seat_to_index(chosen_seats):
             row_dict = {letter: index for index, letter in enumerate(string.ascii_uppercase)}
             matrix_indices = []
@@ -143,11 +149,26 @@ class UI:
             self.booking.set_tickets(tickets)
 
             self.booking.checkout("")
+            # store to temp db
+            if self.active_account.email not in self.booking_history:
+                self.booking_history[self.active_account.email] = []
+            self.booking_history[self.active_account.email].append(self.booking)
+
             print(f"Booking success with reference number: {self.booking.get_booking_number()}")
+            
 
             valid = True
             self.main_screen()
 
+
+    def booking_history_screen(self):
+        if self.active_account.email not in self.booking_history:
+            print("Anda belum memiliki riwayat pembelian")
+        else:
+            for h in self.booking_history[self.active_account.email]:
+                print(h)
+        input("Tekan <enter> untuk kembali ke menu utama")
+        self.main_screen()
 
     def start(self):
         print("Selamat datang di Bioskop Gadjah 21!")

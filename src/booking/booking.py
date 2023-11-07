@@ -79,5 +79,16 @@ class Booking(IBooking):
         
         self.status = "canceled"
     
-    # def __str__(self) -> str:
-    #     return f"Film : {self.name}\nHarga: {self.price}\nGenre : {self.genre}\nDurasi: {self.duration} menit\nSinopsis: {self.synopsis}"
+    def __str__(self):
+        fnb_list = ', '.join([str(fnb.get_name()) for fnb in self.fnbs])
+        seat_list = ', '.join([ticket.get_seat() for ticket in self.tickets])
+
+        return (
+            f"Booking Number: {self.booking_number}\n"
+            f"Film Name: {self.tickets[0].get_schedule().get_film().get_name()}\n"
+            f"Studio: {self.tickets[0].get_schedule().get_studio().get_name()}\n"
+            f"Seats: {seat_list}\n"
+            f"FnBs: {fnb_list if fnb_list else 'No FnBs'}, \n"
+            f"Status: {self.status}\n"
+            f"Total Price: {self.total_price}\n\n"
+        )
