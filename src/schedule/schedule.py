@@ -59,7 +59,7 @@ class Schedule(object):
             print("Seat Availability:")
             print("Row/Col", end='\t')
             for col in range(len(seats[0])):
-                print(col, end='\t')
+                print(col+1, end='\t')
             print()
             for i, row in enumerate(seats):
                 row_label = string.ascii_uppercase[i]  # Convert numeric row index to alphabet
